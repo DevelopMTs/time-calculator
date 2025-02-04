@@ -57,8 +57,10 @@
 <body>
     <div class="container">
         <h1>מחשבון שעות</h1>
-        <p>הכנס רשימת שעות (כל שעה בשורה נפרדת) בפורמט HH:MM</p>
-        <textarea id="timeInput" placeholder="01:30&#10;02:55&#10;00:30"></textarea>
+        <p>הדבק את הטקסט מ-WhatsApp (כולל את התאריכים והשמות)</p>
+        <textarea id="timeInput" placeholder="[1/26, 19:08] MTs: 02:40
+[1/27, 21:35] MTs: 03:00
+[1/28, 18:22] MTs: 01:30"></textarea>
         <div>
             <button onclick="calculateTimes()">חשב סכום שעות</button>
         </div>
@@ -67,6 +69,12 @@
     </div>
 
     <script>
+        function extractTime(line) {
+            // נחפש תבנית של שעות בסוף השורה (לאחר :)
+            const match = line.match(/: (\d{2}:\d{2})$/);
+            return match ? match[1] : null;
+        }
+
         function calculateTimes() {
             const input = document.getElementById('timeInput').value;
             const error = document.getElementById('error');
@@ -74,31 +82,39 @@
             error.textContent = '';
             result.textContent = '';
 
-            // Split input into lines and filter empty lines
-            const times = input.split('\n').filter(time => time.trim());
+            // פיצול לשורות וסינון שורות ריקות
+            const lines = input.split('\n').filter(line => line.trim());
+            
+            // חילוץ השעות מכל שורה
+            const times = lines.map(line => extractTime(line)).filter(time => time);
 
-            // Validate format
+            if (times.length === 0) {
+                error.textContent = 'לא נמצאו שעות בפורמט תקין בטקסט';
+                return;
+            }
+
+            // וידוא פורמט תקין
             const timeRegex = /^([0-9]{1,2}):([0-9]{2})$/;
-            const invalidTimes = times.filter(time => !timeRegex.test(time.trim()));
+            const invalidTimes = times.filter(time => !timeRegex.test(time));
             
             if (invalidTimes.length > 0) {
                 error.textContent = 'שגיאה: כל השעות חייבות להיות בפורמט HH:MM';
                 return;
             }
 
-            // Calculate total minutes
+            // חישוב סך הדקות
             let totalMinutes = 0;
             times.forEach(time => {
                 const [hours, minutes] = time.split(':').map(Number);
                 totalMinutes += hours * 60 + minutes;
             });
 
-            // Convert back to hours and minutes
+            // המרה חזרה לשעות ודקות
             const totalHours = Math.floor(totalMinutes / 60);
             const remainingMinutes = totalMinutes % 60;
 
-            // Format output
-            let output = 'השעות שהוזנו:\n';
+            // פורמט הפלט
+            let output = 'השעות שחולצו מהטקסט:\n';
             output += times.join('\n');
             output += '\n\nסכום השעות:\n';
             output += `${totalHours}:${remainingMinutes.toString().padStart(2, '0')}`;
