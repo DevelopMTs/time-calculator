@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מחשבון שעות</title>
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzaG9ydF9uYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiM0Q0FGNTAiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFVtRjBhVzg5SW5oTmFXNVpUV2x1SUcxbFpYUWlJSFpwWlhkQ2IzZzlJakFnTUNBek5UQWdNelV3SWo0S0lDQWdJRHh6ZEhsc1pUNHVZbUZ6WlNCN0lHWnBiR3c2SUhkb2FYUmxPeUJtYjI1MExXWmhiV2xzZVRvZ2MybDZaVzFoY21zN0lHWnZiblF0YzJsNlpUb2dNVEJ3ZURzZ2ZUd3ZjM1I1YkdVK0NpQWdJQ0E4Y21WamRDQjNhV1IwYUQwaU1UQXdKU0lnYUdWcFoyaDBQU0l4TURBbElpQm1hV3hzUFNKM2FHbDBaU0lnTHo0S0lDQWdJRHgwWlhoMElIZzlJakV3SWlCNVBTSXlNQ0lnWTJ4aGMzTTlJbUpoYzJVaVBrMWphWEp2YmlCemFXWnlhU0E4TDNSbGVIUStDand2YzNablBnPT0iLAogICAgICAic2l6ZXMiOiAiMTQ0eDE0NCIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
+    <meta name="theme-color" content="#4CAF50">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -67,11 +69,17 @@
             display: flex;
             gap: 10px;
         }
+        #installButton {
+            display: none;
+            background-color: #2196F3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>מחשבון שעות</h1>
+        
+        <button id="installButton" onclick="installPWA()">התקן כאפליקציה</button>
         
         <label for="monthPicker">בחר חודש:</label>
         <input type="month" id="monthPicker" class="date-input">
@@ -91,7 +99,38 @@
     </div>
 
     <script>
-        // הגדרת ברירת המחדל לחודש הקודם
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoc2VsZi5za2lwV2FpdGluZygpKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC5yZXNwb25kV2l0aChmZXRjaChldmVudC5yZXF1ZXN0KSk7Cn0pOw==', { scope: '/' })
+            .then(function(registration) {
+                console.log('ServiceWorker registration successful');
+            })
+            .catch(function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installButton').style.display = 'block';
+        });
+
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                document.getElementById('installButton').style.display = 'none';
+            }
+        }
+
+        // Original Application Logic
         function setDefaultMonth() {
             const today = new Date();
             today.setMonth(today.getMonth() - 1);
@@ -100,7 +139,6 @@
             document.getElementById('monthPicker').value = `${year}-${month}`;
         }
 
-        // פונקציה לחישוב ימי עבודה בחודש
         function getWorkingDays(year, month) {
             const startDate = new Date(year, month - 1, 1);
             const endDate = new Date(year, month, 0);
@@ -108,9 +146,8 @@
             
             const currentDate = new Date(startDate);
             while (currentDate <= endDate) {
-                // 0 = ראשון, 6 = שבת
                 const dayOfWeek = currentDate.getDay();
-                if (dayOfWeek !== 5 && dayOfWeek !== 6) { // לא שישי ולא שבת
+                if (dayOfWeek !== 5 && dayOfWeek !== 6) {
                     workingDays++;
                 }
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -132,11 +169,9 @@
             error.textContent = '';
             result.textContent = '';
 
-            // חישוב ימי עבודה
             const [year, month] = monthPicker.value.split('-').map(Number);
             const workingDays = getWorkingDays(year, month);
 
-            // חישוב שעות
             const lines = input.split('\n').filter(line => line.trim());
             const times = lines.map(line => extractTime(line)).filter(time => time);
 
@@ -162,7 +197,6 @@
             const totalHours = Math.floor(totalMinutes / 60);
             const remainingMinutes = totalMinutes % 60;
 
-            // פורמט הפלט כולל ימי עבודה
             const monthNames = [
                 'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
                 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
@@ -184,7 +218,6 @@
             document.getElementById('result').textContent = '';
         }
 
-        // הגדרת ברירת המחדל בטעינת הדף
         window.onload = setDefaultMonth;
     </script>
 </body>
