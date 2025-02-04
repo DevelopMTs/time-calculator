@@ -4,8 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מחשבון שעות</title>
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzaG9ydF9uYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiM0Q0FGNTAiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFVtRjBhVzg5SW5oTmFXNVpUV2x1SUcxbFpYUWlJSFpwWlhkQ2IzZzlJakFnTUNBek5UQWdNelV3SWo0S0lDQWdJRHh6ZEhsc1pUNHVZbUZ6WlNCN0lHWnBiR3c2SUhkb2FYUmxPeUJtYjI1MExXWmhiV2xzZVRvZ2MybDZaVzFoY21zN0lHWnZiblF0YzJsNlpUb2dNVEJ3ZURzZ2ZUd3ZjM1I1YkdVK0NpQWdJQ0E4Y21WamRDQjNhV1IwYUQwaU1UQXdKU0lnYUdWcFoyaDBQU0l4TURBbElpQm1hV3hzUFNKM2FHbDBaU0lnTHo0S0lDQWdJRHgwWlhoMElIZzlJakV3SWlCNVBTSXlNQ0lnWTJ4aGMzTTlJbUpoYzJVaVBrMWphWEp2YmlCemFXWnlhU0E4TDNSbGVIUStDand2YzNablBnPT0iLAogICAgICAic2l6ZXMiOiAiMTQ0eDE0NCIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
+
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4CAF50">
+    <link rel="manifest" href='data:application/json,{
+      "name": "מחשבון שעות",
+      "short_name": "מחשבון שעות",
+      "start_url": "/",
+      "display": "standalone",
+      "background_color": "#ffffff",
+      "theme_color": "#4CAF50",
+      "icons": [{
+        "src": "data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 512 512\'%3E%3Ccircle cx=\'256\' cy=\'256\' r=\'240\' fill=\'%234CAF50\'/%3E%3Ccircle cx=\'256\' cy=\'256\' r=\'220\' fill=\'white\'/%3E%3Cg stroke=\'%23333\' stroke-width=\'8\'%3E%3Cline x1=\'256\' y1=\'100\' x2=\'256\' y2=\'120\'/%3E%3Cline x1=\'256\' y1=\'100\' x2=\'256\' y2=\'120\' transform=\'rotate(30 256 256)\'/%3E%3Cline x1=\'256\' y1=\'100\' x2=\'256\' y2=\'120\' transform=\'rotate(60 256 256)\'/%3E%3C/g%3E%3Ctext x=\'256\' y=\'270\' text-anchor=\'middle\' font-size=\'160\' fill=\'%23333\'%3E12%3C/text%3E%3C/svg%3E",
+        "sizes": "512x512",
+        "type": "image/svg+xml"
+      }]
+    }'>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,12 +28,18 @@
             margin: 20px auto;
             padding: 20px;
             background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .container {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         textarea {
             width: 100%;
@@ -72,14 +93,14 @@
         #installButton {
             display: none;
             background-color: #2196F3;
+            margin-top: auto;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>מחשבון שעות</h1>
-        
-        <button id="installButton" onclick="installPWA()">התקן כאפליקציה</button>
         
         <label for="monthPicker">בחר חודש:</label>
         <input type="month" id="monthPicker" class="date-input">
@@ -96,6 +117,8 @@
         
         <div id="error" class="error"></div>
         <div id="result"></div>
+
+        <button id="installButton" onclick="installPWA()">התקן כאפליקציה</button>
     </div>
 
     <script>
@@ -130,7 +153,7 @@
             }
         }
 
-        // Original Application Logic
+        // הגדרת ברירת המחדל לחודש הקודם
         function setDefaultMonth() {
             const today = new Date();
             today.setMonth(today.getMonth() - 1);
@@ -139,6 +162,7 @@
             document.getElementById('monthPicker').value = `${year}-${month}`;
         }
 
+        // פונקציה לחישוב ימי עבודה בחודש
         function getWorkingDays(year, month) {
             const startDate = new Date(year, month - 1, 1);
             const endDate = new Date(year, month, 0);
