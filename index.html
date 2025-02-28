@@ -242,7 +242,7 @@
             
             // חישוב ימי חופש
             const previousVacationDays = parseFloat(document.getElementById('previousVacationDays').value) || 0;
-            const totalWorkHours = workingDays * 2; // מספר ימי עבודה * 2 שעות (יום עבודה רגיל)
+            const totalWorkHours = workingDays * 2; // מספר ימי עבודה * 2 שעות (יום עבודה)
             const workedHours = totalHours + (remainingMinutes / 60);
             const vacationDaysEarned = (totalWorkHours - workedHours) / 2; // מחלקים ב-2 שעות ליום עבודה
             const totalVacationDays = previousVacationDays + vacationDaysEarned;
