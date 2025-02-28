@@ -132,7 +132,7 @@
         // הגדרת ברירת המחדל לחודש הקודם
         function setDefaultMonth() {
             const today = new Date();
-            today.setMonth(today.getMonth() - 1);
+            today.setMonth(today.getMonth());
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('monthPicker').value = `${year}-${month}`;
