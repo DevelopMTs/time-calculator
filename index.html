@@ -217,7 +217,7 @@
             let output = `חודש ${monthNames[month - 1]} ${year}\n`;
             output += `מספר ימי עבודה בחודש: ${workingDays}\n`;
             output += `מספר ימי עבודה בפועל: ${entriesWithDateAndTime.length}\n`;
-            output += '\nהשעות שחולצו מהטקסט:\n';
+            output += '\nשעות העבודה שבוצעו:\n';
             
             entriesWithDateAndTime.forEach(entry => {
                 const [hours, minutes] = entry.workTime.split(':').map(Number);
@@ -244,7 +244,7 @@
             const previousVacationDays = parseFloat(document.getElementById('previousVacationDays').value) || 0;
             const totalWorkHours = workingDays * 2; // מספר ימי עבודה * 2 שעות (יום עבודה)
             const workedHours = totalHours + (remainingMinutes / 60);
-            const vacationDaysEarned = (totalWorkHours - workedHours) / 2; // מחלקים ב-2 שעות ליום עבודה
+            const vacationDaysEarned = (workedHours - totalWorkHours) / 2; // מחלקים ב-2 שעות ליום עבודה
             const totalVacationDays = previousVacationDays + vacationDaysEarned;
             
             output += '\n\nמספר ימי חופש קודמים: ' + previousVacationDays.toFixed(1);
