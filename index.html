@@ -4,23 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מחשבון שעות</title>
-   <!-- <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzaG9ydF9uYW1lIjogItee15vXqdeb15XXnyDXqdeV16IiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiM0Q0FGNTAiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFVtRjBhVzg5SW5oTmFXNVpUV2x1SUcxbFpYUWlJSFpwWlhkQ2IzZzlJakFnTUNBek5UQWdNelV3SWo0S0lDQWdJRHh6ZEhsc1pUNHVZbUZ6WlNCN0lHWnBiR3c2SUhkb2FYUmxPeUJtYjI1MExXWmhiV2xzZVRvZ2MybDZaVzFoY21zN0lHWnZiblF0YzJsNlpUb2dNVEJ3ZURzZ2ZUd3ZjM1I1YkdVK0NpQWdJQ0E4Y21WamRDQjNhV1IwYUQwaU1UQXdKU0lnYUdWcFoyaDBQU0l4TURBbElpQm1hV3hzUFNKM2FHbDBaU0lnTHo0S0lDQWdJRHgwWlhoMElIZzlJakV3SWlCNVBTSXlNQ0lnWTJ4aGMzTTlJbUpoYzJVaVBrMWphWEp2YmlCemFXWnlhU0E4TDNSbGVIUStDand2YzNablBnPT0iLAogICAgICAic2l6ZXMiOiAiMTQ0eDE0NCIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0="> -->
     <meta name="theme-color" content="#4CAF50">
-     <link rel="manifest" href='data:application/json,{
-  "name": "מחשבון שעות",
-  "short_name": "מחשבון שעות",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
-  "icons": [
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaW5ZTWluIG1lZXQiIHZpZXdCb3g9IjAgMCAzNTAgMzUwIj4KICAgIDxzdHlsZT4uYmFzZSB7IGZpbGw6IHdoaXRlOyBmb250LWZhbWlseTogc2l6ZW1hcms7IGZvbnQtc2l6ZTogMTBweDsgfTwvc3R5bGU+CiAgICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ3aGl0ZSIgLz4KICAgIDx0ZXh0IHg9IjEwIiB5PSIyMCIgY2xhc3M9ImJhc2UiPk1jaXJvbiBzaWZyaSA8L3RleHQ+Cjwvc3ZnPg==",
-      "sizes": "144x144",
-      "type": "image/png"
-    }
-  ]
-}'> 
 
     <style>
         body {
@@ -49,6 +33,8 @@
             padding: 10px;
             direction: ltr;
             font-family: monospace;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         button {
             background-color: #4CAF50;
@@ -72,13 +58,17 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            direction: ltr;
+            direction: rtl;
+            text-align: right;
             font-family: monospace;
             white-space: pre-wrap;
+            min-height: 100px;
+            background-color: #f9f9f9;
         }
         .error {
             color: red;
             margin: 10px 0;
+            font-weight: bold;
         }
         .date-input {
             margin: 10px 0;
@@ -91,11 +81,15 @@
             display: flex;
             gap: 10px;
         }
-        #installButton {
-            display: none;
-            background-color: #2196F3;
-            margin-top: auto;
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        h1 {
+            color: #2e7d32;
             text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -103,8 +97,13 @@
     <div class="container">
         <h1>מחשבון שעות</h1>
         
+
+        
         <label for="monthPicker">בחר חודש:</label>
         <input type="month" id="monthPicker" class="date-input">
+        
+        <label for="previousVacationDays">מספר ימי חופש קודמים:</label>
+        <input type="number" id="previousVacationDays" class="date-input" min="0" step="0.5" value="0">
         
         <p>הדבק את הטקסט מ-WhatsApp (כולל את התאריכים והשמות)</p>
         <textarea id="timeInput" placeholder="[1/26, 19:08] MTs: 02:40
@@ -118,41 +117,17 @@
         
         <div id="error" class="error"></div>
         <div id="result"></div>
-
-        <button id="installButton" onclick="installPWA()">התקן כאפליקציה</button>
     </div>
 
     <script>
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoc2VsZi5za2lwV2FpdGluZygpKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC5yZXNwb25kV2l0aChmZXRjaChldmVudC5yZXF1ZXN0KSk7Cn0pOw==', { scope: '/' })
-            .then(function(registration) {
-                console.log('ServiceWorker registration successful');
-            })
-            .catch(function(err) {
-                console.log('ServiceWorker registration failed: ', err);
-            });
-        }
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installButton').style.display = 'block';
-        });
-
-        async function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredPrompt = null;
-                document.getElementById('installButton').style.display = 'none';
-            }
-        }
+        // שמות ימי השבוע בעברית
+        const hebrewDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+        
+        // שמות החודשים בעברית
+        const monthNames = [
+            'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+            'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+        ];
 
         // הגדרת ברירת המחדל לחודש הקודם
         function setDefaultMonth() {
@@ -161,6 +136,8 @@
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('monthPicker').value = `${year}-${month}`;
+            
+
         }
 
         // פונקציה לחישוב ימי עבודה בחודש
@@ -181,9 +158,18 @@
             return workingDays;
         }
 
-        function extractTime(line) {
-            const match = line.match(/: (\d{2}:\d{2})$/);
-            return match ? match[1] : null;
+        function extractDateAndTime(line) {
+            // מחלץ את התאריך והשעה מהפורמט של WhatsApp
+            const match = line.match(/\[(\d+)\/(\d+),\s+(\d+:\d+)\].*:\s+(\d+:\d+)$/);
+            if (match) {
+                return {
+                    month: parseInt(match[1]),
+                    day: parseInt(match[2]),
+                    messageTime: match[3],
+                    workTime: match[4]
+                };
+            }
+            return null;
         }
 
         function calculateTimes() {
@@ -191,25 +177,34 @@
             const error = document.getElementById('error');
             const result = document.getElementById('result');
             const monthPicker = document.getElementById('monthPicker');
+            // השגת השנה מתוך בחירת החודש
+            const [year, month] = monthPicker.value.split('-').map(Number);
+            const selectedYear = year;
             
             error.textContent = '';
             result.textContent = '';
 
-            // חישוב ימי עבודה
-            const [year, month] = monthPicker.value.split('-').map(Number);
+
             const workingDays = getWorkingDays(year, month);
 
             // חישוב שעות
             const lines = input.split('\n').filter(line => line.trim());
-            const times = lines.map(line => extractTime(line)).filter(time => time);
+            const entriesWithDateAndTime = [];
+            
+            lines.forEach(line => {
+                const extracted = extractDateAndTime(line);
+                if (extracted) {
+                    entriesWithDateAndTime.push(extracted);
+                }
+            });
 
-            if (times.length === 0) {
+            if (entriesWithDateAndTime.length === 0) {
                 error.textContent = 'לא נמצאו שעות בפורמט תקין בטקסט';
                 return;
             }
 
             const timeRegex = /^([0-9]{1,2}):([0-9]{2})$/;
-            const invalidTimes = times.filter(time => !timeRegex.test(time));
+            const invalidTimes = entriesWithDateAndTime.filter(entry => !timeRegex.test(entry.workTime));
             
             if (invalidTimes.length > 0) {
                 error.textContent = 'שגיאה: כל השעות חייבות להיות בפורמט HH:MM';
@@ -217,26 +212,43 @@
             }
 
             let totalMinutes = 0;
-            times.forEach(time => {
-                const [hours, minutes] = time.split(':').map(Number);
+            
+            // פורמט הפלט כולל ימי עבודה
+            let output = `חודש ${monthNames[month - 1]} ${year}\n`;
+            output += `מספר ימי עבודה בחודש: ${workingDays}\n`;
+            output += `מספר ימי עבודה בפועל: ${entriesWithDateAndTime.length}\n`;
+            output += '\nהשעות שחולצו מהטקסט:\n';
+            
+            entriesWithDateAndTime.forEach(entry => {
+                const [hours, minutes] = entry.workTime.split(':').map(Number);
                 totalMinutes += hours * 60 + minutes;
+                
+                // יצירת התאריך המלא כולל השנה מה-dropdown
+                const entryDate = new Date(selectedYear, entry.month - 1, entry.day);
+                const dayOfWeek = hebrewDays[entryDate.getDay()];
+                
+                // פורמט התאריך המלא
+                const fullDateStr = `${entry.day}/${entry.month}/${selectedYear} יום ${dayOfWeek}`;
+                
+                // הוספה לפלט
+                output += `${entry.workTime} - ${fullDateStr}\n`;
             });
-
+            
             const totalHours = Math.floor(totalMinutes / 60);
             const remainingMinutes = totalMinutes % 60;
 
-            // פורמט הפלט כולל ימי עבודה
-            const monthNames = [
-                'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
-                'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
-            ];
-            
-            let output = `חודש ${monthNames[month - 1]} ${year}\n`;
-            output += `מספר ימי עבודה בחודש: ${workingDays}\n`;
-            output += '\nהשעות שחולצו מהטקסט:\n';
-            output += times.join('\n');
-            output += '\n\nסכום השעות:\n';
+            output += '\nסכום השעות:\n';
             output += `${totalHours}:${remainingMinutes.toString().padStart(2, '0')}`;
+            
+            // חישוב ימי חופש
+            const previousVacationDays = parseFloat(document.getElementById('previousVacationDays').value) || 0;
+            const totalWorkHours = workingDays * 2; // מספר ימי עבודה * 2 שעות (יום עבודה רגיל)
+            const workedHours = totalHours + (remainingMinutes / 60);
+            const vacationDaysEarned = (totalWorkHours - workedHours) / 2; // מחלקים ב-2 שעות ליום עבודה
+            const totalVacationDays = previousVacationDays + vacationDaysEarned;
+            
+            output += '\n\nמספר ימי חופש קודמים: ' + previousVacationDays.toFixed(1);
+            output += '\nמספר יתרת ימי החופש: ' + totalVacationDays.toFixed(1);
 
             result.textContent = output;
         }
